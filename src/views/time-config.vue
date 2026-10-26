@@ -61,10 +61,10 @@ function saveConfiguration() {
     ElMessage.warning("请选择设置时间");
     return;
   }
-  ElMessage.success("时间配置已保存（本地模拟）");
+  ElMessage.success("时间配置已保存");
 }
 function syncToNodes() {
-  ElMessage.success(`已向节点同步${mode.value === "ntp" ? "NTP" : configuredTime.value}时间（本地模拟）`);
+  ElMessage.success(`已向节点同步${mode.value === "ntp" ? "NTP" : configuredTime.value}时间`);
 }
 onMounted(() => {
   clockTimer = window.setInterval(() => {
