@@ -196,7 +196,7 @@
             <tbody>
               <tr v-for="(instance, index) in selectedInstanceObjects" :key="instance.id">
                 <td><i :style="{ background: chartColors[index % chartColors.length] }"></i>{{ instance.name }}</td>
-                <td>{{ tableValue(activeMetric.key, instance.id) }}{{ activeMetric.unit }}</td>
+                <td>{{ tableValue(activeMetric.key, instance.id) }}</td>
               </tr>
               <tr v-if="!selectedInstanceObjects.length">
                 <td colspan="2" class="empty-row">暂无实例</td>
