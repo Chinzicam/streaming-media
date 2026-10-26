@@ -1,0 +1,278 @@
+@import "./base.scss";
+
+.system-config {
+  height: calc(100% - 24px);
+
+  .el-button {
+    border: none;
+  }
+
+  .left-menus {
+    width: 200px;
+    background: #141a20;
+    border: none;
+
+    .el-menu-item,
+    .el-menu-item > span {
+      cursor: pointer;
+    }
+
+    .el-menu-item {
+      height: 60px;
+
+      &.is-active {
+        color: #fff;
+        // background: rgba(8, 219, 114, 0.8);
+        background: $primary-color;
+        box-shadow: 0px 3px 5px 0px rgba(7, 7, 18, 0.5), inset 0px 1px 3px 0px rgba(255, 255, 255, 0.1);
+      }
+
+      i {
+        margin-right: 10px;
+      }
+    }
+
+    .el-menu-item:not(.is-active):hover {
+      color: #898d97;
+      background: rgba(8, 219, 114, 0.2);
+      box-shadow: 0px 3px 5px 0px rgba(7, 7, 18, 0.5), inset 0px 1px 3px 0px rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .right-content {
+    flex: 1;
+    background: linear-gradient(0deg, #181f25, #1a252e);
+    box-shadow: 0px 5px 10px 0px rgba(7, 7, 18, 0.3);
+  }
+}
+
+.set-wrap {
+  padding: 20px 20px 24px;
+
+  .el-tabs__content {
+    height: calc(100vh - 68px - 20px - 55px - 20px);
+    overflow-y: auto;
+  }
+
+  &.sys .el-tabs__content {
+    height: calc(100vh - 68px - 20px - 55px - 20px - 10px);
+    overflow-y: auto;
+  }
+}
+
+.video-source {
+  padding: 18px 30px;
+  position: relative;
+
+  .btn-ipc {
+    position: absolute;
+    top: 28px;
+    right: 30px;
+    width: 60px;
+    height: 20px;
+    background: $primary-color;
+    // background: rgba(255, 255, 255, 0.2);
+    // border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    border: none;
+    color: #fff;
+    // color:rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 10;
+  }
+}
+
+.pane-inner-wrap {
+  height: calc(100vh - 68px - 18px - 40px - 15px - 80px);
+  display: flex;
+  // padding-top: 30px;
+  box-sizing: border-box;
+  overflow-y: auto;
+
+  .view-box {
+    margin-left: 80px;
+  }
+}
+
+.el-select-dropdown__list {
+  padding: 0;
+  border: none;
+  background: #313a42;
+  box-shadow: 0px 3px 5px 0px rgba(7, 7, 18, 0.1);
+  border-radius: 2px;
+
+  .el-select-dropdown__item {
+    color: #999;
+
+    &.selected,
+    &:hover {
+      color: #ccc;
+      background: #454f58;
+    }
+  }
+}
+
+// 表格相关
+.table-hd {
+  height: 60px;
+  line-height: 60px;
+  color: #cccccc;
+}
+
+.btn-text-green {
+  text-decoration: underline;
+  color: $primary-color;
+  cursor: pointer;
+}
+
+.d-table {
+  .account-pwd {
+    display: inline-block;
+    width: 176px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background: #313a42;
+    border-radius: 2px;
+  }
+}
+
+// ipc管理弹窗
+.ipc-dialog {
+  .el-dialog__body {
+    padding: 0 0 45px;
+  }
+
+  .d-table {
+    .d-input {
+      width: 100%;
+    }
+  }
+}
+
+// 课堂信息 定时任务
+.course-info,
+.timing-task {
+  height: 100%;
+  padding: 18px 30px 20px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+
+  .result {
+    width: 1118px;
+  }
+
+  .result-hd {
+    color: #ccc;
+    height: 32px;
+    line-height: 32px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+.timing-task .task-list .item .info .info-line > span {
+  width: 320px;
+  @include single_text_overflow(320px);
+}
+
+.courseinfo-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.no-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 200px;
+
+  img {
+    width: 160px;
+  }
+
+  .text {
+    color: #ccc;
+    margin-top: 20px;
+  }
+}
+
+.sys,
+.director-wrap {
+  .rec-host-item {
+    margin-bottom: 20px;
+
+    &.item-disk {
+      // margin-right: 40px;
+    }
+  }
+
+  .item-title-hd {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    line-height: 40px;
+
+    .green-link + .green-link {
+      margin-left: 30px;
+    }
+  }
+
+  .item-bd {
+    padding: 25px 0 5px 0;
+  }
+
+  .info-line {
+    display: flex;
+    justify-content: space-between;
+    line-height: 32px;
+    margin-bottom: 20px;
+
+    &.line-hd {
+      margin-top: 40px;
+      padding: 0 20px;
+
+      .line-hd-btn {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+
+    > span {
+      flex: 1;
+      display: flex;
+    }
+
+    .text {
+      display: inline-block;
+      width: 110px;
+      max-width: 110px;
+      margin-right: 20px;
+      text-align: right;
+    }
+
+    .long-text {
+      width: 120px;
+      max-width: 120px;
+    }
+
+    .very-long-text {
+      width: 130px;
+      max-width: 130px;
+    }
+
+    .long-long-text {
+      width: 200px;
+      max-width: 200px;
+    }
+
+    .unit {
+      margin-left: 5px;
+    }
+  }
+}

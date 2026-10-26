@@ -1,0 +1,40 @@
+// 颜色
+$primary-color: #307af5;
+$warn-color: #f58705;
+$danger-color: #f84e49;
+$success-color: #00b555;
+$topbar-bg: #212428;
+$level1-bg: #2b2e33;
+$level2-bg: #f2f4f7;
+$list-bg: #f5f5f5;
+$border-color: #dddddd;
+$ThemeColor: #1e89f8;
+// 文字颜色
+$main-text-color: #333;
+$text-color: #666;
+$sub-text-color: #999;
+//字体
+$level2-size: 20px;
+$tab-title-size: 16px;
+$title-size: 14px;
+$normal-size: 12px;
+
+@mixin single_text_overflow($width) {
+  max-width: $width;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/**
+ * 文字超出隐藏并显示省略号(不支持单行)
+ */
+@mixin text-overflow($lineNumber: 2) {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  //这个代表你要在几行显示省略号
+  -webkit-line-clamp: $lineNumber;
+  -webkit-box-orient: vertical;
+}

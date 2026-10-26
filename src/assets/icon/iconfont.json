@@ -1,0 +1,114 @@
+{
+  "id": "4650631",
+  "name": "embedded",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "嵌入式ai",
+  "glyphs": [
+    {
+      "icon_id": "33356224",
+      "name": "下载模板",
+      "font_class": "down-temp",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "33356225",
+      "name": "上传文件",
+      "font_class": "upload-file",
+      "unicode": "e669",
+      "unicode_decimal": 58985
+    },
+    {
+      "icon_id": "8315566",
+      "name": "班级管理",
+      "font_class": "banjiguanli",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "1346659",
+      "name": "警告",
+      "font_class": "warn",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "671245",
+      "name": "课表",
+      "font_class": "lesson",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "29786262",
+      "name": "考勤统计",
+      "font_class": "stat",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "4377338",
+      "name": "我的课表",
+      "font_class": "shedule",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "5651523",
+      "name": "系统设置",
+      "font_class": "sys",
+      "unicode": "e68d",
+      "unicode_decimal": 59021
+    },
+    {
+      "icon_id": "14280168",
+      "name": "概览",
+      "font_class": "overview",
+      "unicode": "e66d",
+      "unicode_decimal": 58989
+    },
+    {
+      "icon_id": "23442264",
+      "name": "icon_用户管理",
+      "font_class": "usermanage",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "34524417",
+      "name": "员工考勤统计",
+      "font_class": "stat-student",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "15838525",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e67d",
+      "unicode_decimal": 59005
+    },
+    {
+      "icon_id": "38140770",
+      "name": "账户",
+      "font_class": "user",
+      "unicode": "e6a2",
+      "unicode_decimal": 59042
+    },
+    {
+      "icon_id": "38140774",
+      "name": "密码",
+      "font_class": "password",
+      "unicode": "e6a6",
+      "unicode_decimal": 59046
+    },
+    {
+      "icon_id": "11175683",
+      "name": "收起",
+      "font_class": "collapse",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    }
+  ]
+}

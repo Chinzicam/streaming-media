@@ -1,0 +1,143 @@
+@use "./base.scss";
+
+:root {
+  --el-color-primary: #307af5;
+  --el-color-success: #00b555;
+  --el-color-warning: #ff8611;
+  --el-color-danger: #f84e49;
+  --el-font-size-base: 14px;
+  --el-color-primary-light-9: #e6efff;
+  --el-color-danger-light-9: #ffe9e5;
+  --el-color-info-light-9: #f2f2f2;
+  --el-button-add-bg-color: #cce0ff;
+  --el-color-primary-dark-2: #307af5;
+  --el-color-primary-light-5: #99c0ff;
+  --el-color-danger-light-5: #fca597;
+  --el-color-info-light-5: #dddddd;
+  --el-color-danger-hover: #ffd3cc;
+  --el-color-info: #666666;
+  --el-border-radius-base: 2px;
+  --el-border: 1px solid #dddddd;
+  --el-table-border-color: #dddddd;
+}
+button.el-button {
+  padding: 10px 24px;
+  border-width: 0px;
+  border-radius: 2px;
+}
+.el-button.el-button--primary.is-plain,
+.el-button.el-button--danger.is-plain {
+  padding: 10px 16px;
+  --el-button-hover-bg-color: var(--el-button-add-bg-color);
+  --el-button-hover-text-color: var(--el-color-primary-dark-2);
+}
+button.el-button.el-button--danger.is-plain {
+  --el-button-hover-bg-color: var(--el-color-danger-hover);
+  --el-button-hover-text-color: var(--el-color-danger);
+  --el-button-active-bg-color: var(--el-color-danger);
+}
+
+.el-button.el-button--info.is-plain {
+  padding: 10px 14px;
+  --el-button-text-color: var(--el-color-info);
+  --el-button-bg-color: var(--el-color-info-light-9);
+  border: 1px solid #ddd;
+  --el-button-hover-bg-color: var(--el-color-info-light-9);
+  --el-button-hover-text-color: var(--el-color-primary-dark-2);
+  --el-button-active-bg-color: var(--el-color-info-light-9);
+}
+
+.el-message-box {
+  --el-messagebox-width: 480px;
+  padding: 30px;
+  .el-message-box__header {
+    padding: 0;
+    .el-message-box__title {
+      line-height: 1;
+    }
+  }
+  .el-message-box__headerbtn {
+    height: 30px;
+    top: 28px;
+    right: 30px;
+    font-size: 16px;
+    .el-message-box__close {
+      font-size: 16px;
+    }
+  }
+  .el-message-box__content {
+    padding: 40px 0;
+  }
+  .el-message-box__container {
+    justify-content: center;
+  }
+  .el-message-box__message {
+    padding-left: 0;
+    padding-right: 0;
+    color: base.$main-text-color; // 修正这里
+  }
+  .el-message-box-icon--warning {
+    left: 0;
+    top: 0;
+    font-size: 24px;
+  }
+  .el-message-box__btns {
+    padding: 0;
+  }
+  .el-button {
+    width: 60px;
+  }
+  .el-button:not(.el-button--primary) {
+    border: 1px solid base.$border-color; // 修正这里
+    color: base.$text-color; // 修正这里
+  }
+}
+
+div.el-dialog {
+  padding: 16px 30px 30px 30px;
+  border-radius: 2px;
+  .el-dialog__header {
+    padding-top: calc(30px - 16px);
+    padding-bottom: 30px;
+
+    .el-dialog__title {
+      line-height: 1;
+      font-size: 16px;
+      color: base.$main-text-color; // 修正这里
+    }
+  }
+
+  .el-dialog__headerbtn {
+    height: calc(30px * 2 + 16px);
+    font-size: 16px;
+    color: base.$text-color; // 修正这里
+  }
+  .el-button:not(.el-button--primary) {
+    border: 1px solid base.$border-color; // 修正这里
+    color: base.$text-color; // 修正这里
+  }
+  .el-button + .el-button {
+    margin-left: 10px;
+  }
+  .el-form-item__label {
+    color: base.$main-text-color; // 修正这里
+  }
+  .el-button {
+    width: 60px;
+  }
+}
+.el-popup-parent--hidden {
+  width: 100% !important;
+}
+
+.el-drawer .el-drawer__header {
+  padding: 40px 26px 0 30px;
+  margin-bottom: 20px;
+  .el-drawer__title {
+    color: #333;
+    font-size: 20px;
+  }
+  .el-drawer__close {
+    font-size: 20px;
+  }
+}

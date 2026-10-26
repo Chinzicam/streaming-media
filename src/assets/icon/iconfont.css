@@ -1,0 +1,75 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4650631 */
+  src: url('iconfont.woff2?t=1747650426980') format('woff2'),
+       url('iconfont.woff?t=1747650426980') format('woff'),
+       url('iconfont.ttf?t=1747650426980') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-down-temp:before {
+  content: "\e668";
+}
+
+.icon-upload-file:before {
+  content: "\e669";
+}
+
+.icon-banjiguanli:before {
+  content: "\e616";
+}
+
+.icon-warn:before {
+  content: "\e62e";
+}
+
+.icon-lesson:before {
+  content: "\e604";
+}
+
+.icon-stat:before {
+  content: "\e627";
+}
+
+.icon-shedule:before {
+  content: "\e62d";
+}
+
+.icon-sys:before {
+  content: "\e68d";
+}
+
+.icon-overview:before {
+  content: "\e66d";
+}
+
+.icon-usermanage:before {
+  content: "\e633";
+}
+
+.icon-stat-student:before {
+  content: "\e639";
+}
+
+.icon-search:before {
+  content: "\e67d";
+}
+
+.icon-user:before {
+  content: "\e6a2";
+}
+
+.icon-password:before {
+  content: "\e6a6";
+}
+
+.icon-collapse:before {
+  content: "\e623";
+}
+
