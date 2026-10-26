@@ -18,10 +18,10 @@
     </section>
 
     <section :class="['filter-panel', { 'is-collapsed': !filtersExpanded }]">
-      <button class="collapse-button" type="button" @click="filtersExpanded = !filtersExpanded">
+      <!-- <button class="collapse-button" type="button" @click="filtersExpanded = !filtersExpanded">
         <span>{{ filtersExpanded ? "⌃" : "⌄" }}</span
         >{{ filtersExpanded ? "收起筛选" : "展开筛选" }}
-      </button>
+      </button> -->
       <div v-if="filtersExpanded" class="filter-row">
         <span class="filter-label">维度</span>
         <label v-for="metric in metrics" :key="metric.key" class="filter-chip">
@@ -216,7 +216,9 @@
         <div v-for="(metric, metricIndex) in resourceMetrics" :key="metric.key" class="mini-chart">
           <h3>{{ metric.label }}</h3>
           <div class="mini-plot">
-            <span v-for="tick in [100, 50, 0]" :key="tick" class="mini-y-label">{{ tick }}{{ metric.unit }}</span>
+            <div class="mini-y-axis">
+              <span v-for="tick in [100, 50, 0]" :key="tick" class="mini-y-label">{{ tick }}{{ metric.unit }}</span>
+            </div>
             <div
               class="mini-lines"
               @mousemove="updateHover(`resource-${metric.key}`, $event, $event.currentTarget)"
@@ -359,7 +361,9 @@
         <div v-for="metric in diskMetrics" :key="metric.key" class="mini-chart">
           <h3>{{ metric.label }}</h3>
           <div class="mini-plot">
-            <span v-for="tick in [100, 50, 0]" :key="tick" class="mini-y-label">{{ tick }}{{ metric.unit }}</span>
+            <div class="mini-y-axis">
+              <span v-for="tick in [100, 50, 0]" :key="tick" class="mini-y-label">{{ tick }}{{ metric.unit }}</span>
+            </div>
             <div
               class="mini-lines"
               @mousemove="updateHover(`disk-${metric.key}`, $event, $event.currentTarget)"
@@ -1158,14 +1162,21 @@ function refreshData() {
   display: flex;
   gap: 8px;
 }
-.mini-y-label {
-  width: 33px;
+.mini-y-axis {
   display: flex;
+  flex: 0 0 38px;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
+  min-height: 0;
   padding: 0 0 2px;
   box-sizing: border-box;
+}
+.mini-y-label {
+  display: block;
+  max-width: 100%;
+  line-height: 1;
+  white-space: nowrap;
   color: #9aa5b6;
   font-size: 10px;
 }
