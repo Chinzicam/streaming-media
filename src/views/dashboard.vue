@@ -1,5 +1,5 @@
 <template>
-  <main class="dashboard">
+  <main :class="['dashboard', { 'filters-collapsed': !filtersExpanded }]">
     <section class="overview-bar">
       <div class="overview-item overview-heading"><span class="heading-mark"></span><strong>基本信息</strong></div>
       <div class="overview-item">
@@ -18,10 +18,10 @@
     </section>
 
     <section :class="['filter-panel', { 'is-collapsed': !filtersExpanded }]">
-      <button class="collapse-button" type="button" @click="filtersExpanded = !filtersExpanded">
+      <!-- <button class="collapse-button" type="button" @click="filtersExpanded = !filtersExpanded">
         <span>{{ filtersExpanded ? "⌃" : "⌄" }}</span
         >{{ filtersExpanded ? "收起筛选" : "展开筛选" }}
-      </button>
+      </button> -->
       <div v-if="filtersExpanded" class="filter-row">
         <span class="filter-label">维度</span>
         <label v-for="metric in metrics" :key="metric.key" class="filter-chip">
@@ -216,7 +216,9 @@
         <div v-for="(metric, metricIndex) in resourceMetrics" :key="metric.key" class="mini-chart">
           <h3>{{ metric.label }}</h3>
           <div class="mini-plot">
-            <span v-for="tick in [100, 50, 0]" :key="tick" class="mini-y-label">{{ tick }}{{ metric.unit }}</span>
+            <div class="mini-y-axis">
+              <span v-for="tick in [100, 50, 0]" :key="tick" class="mini-y-label">{{ tick }}{{ metric.unit }}</span>
+            </div>
             <div
               class="mini-lines"
               @mousemove="updateHover(`resource-${metric.key}`, $event, $event.currentTarget)"
@@ -359,7 +361,9 @@
         <div v-for="metric in diskMetrics" :key="metric.key" class="mini-chart">
           <h3>{{ metric.label }}</h3>
           <div class="mini-plot">
-            <span v-for="tick in [100, 50, 0]" :key="tick" class="mini-y-label">{{ tick }}{{ metric.unit }}</span>
+            <div class="mini-y-axis">
+              <span v-for="tick in [100, 50, 0]" :key="tick" class="mini-y-label">{{ tick }}{{ metric.unit }}</span>
+            </div>
             <div
               class="mini-lines"
               @mousemove="updateHover(`disk-${metric.key}`, $event, $event.currentTarget)"
@@ -426,13 +430,13 @@ import { computed, ref, watch } from "vue";
 
 const metrics = [
   { key: "cpu", label: "CPU使用率", icon: "◉", color: "#ff8b43", unit: "%" },
-  { key: "memory", label: "内存使用率", icon: "▥", color: "#4e8cff", unit: "%" },
-  { key: "disk", label: "硬盘使用率", icon: "▰", color: "#5789ff", unit: "%" },
-  { key: "networkSend", label: "网络发送速率", icon: "⇧", color: "#3db8d9", unit: "Mb/s" },
-  { key: "networkReceive", label: "网络接收速率", icon: "⇩", color: "#34a8c8", unit: "Mb/s" },
-  { key: "diskRead", label: "硬盘读取速率", icon: "⇧", color: "#5789ff", unit: "KB/s" },
-  { key: "diskWrite", label: "硬盘写入速率", icon: "⇩", color: "#34bca2", unit: "KB/s" },
-  { key: "streams", label: "流数量", icon: "▦", color: "#8b69db", unit: " 路" }
+  { key: "memory", label: "内存使用率", icon: "▥", color: "#e87924", unit: "%" },
+  { key: "disk", label: "硬盘使用率", icon: "▰", color: "#c96820", unit: "%" },
+  { key: "networkSend", label: "网络发送速率", icon: "⇧", color: "#e99a4b", unit: "Mb/s" },
+  { key: "networkReceive", label: "网络接收速率", icon: "⇩", color: "#d9823c", unit: "Mb/s" },
+  { key: "diskRead", label: "硬盘读取速率", icon: "⇧", color: "#c96820", unit: "KB/s" },
+  { key: "diskWrite", label: "硬盘写入速率", icon: "⇩", color: "#b87943", unit: "KB/s" },
+  { key: "streams", label: "流数量", icon: "▦", color: "#a85e31", unit: " 路" }
 ] as const;
 type MetricKey = (typeof metrics)[number]["key"];
 const resourceMetrics = metrics.filter((metric) => ["cpu", "memory", "disk"].includes(metric.key));
@@ -449,7 +453,7 @@ const ranges = [
   { value: 60, label: "近1小时" },
   { value: 360, label: "近6小时" }
 ];
-const chartColors = ["#4e83ff", "#19b889", "#a75bd4", "#8874ff"];
+const chartColors = ["#e87924", "#4f9b70", "#d49a3a", "#b66c53"];
 const selectedMetrics = ref<MetricKey[]>(metrics.map((metric) => metric.key));
 const selectedInstances = ref(instances.map((instance) => instance.id));
 const selectedRange = ref(10);
@@ -616,13 +620,18 @@ function refreshData() {
 
 <style lang="scss" scoped>
 .dashboard {
+  display: grid;
+  grid-template-columns: minmax(210px, 250px) minmax(0, 1fr);
+  grid-auto-flow: row;
+  align-content: start;
+  gap: 14px;
   height: 100%;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 8px;
+  padding: 18px;
   box-sizing: border-box;
-  background: #edf2f7;
+  background: #f5f3f0;
   color: #344358;
   font-size: 13px;
 }
@@ -631,14 +640,16 @@ function refreshData() {
 .metrics-panel,
 .chart-panel {
   background: #fff;
-  border-radius: 4px;
+  border: 1px solid #e9e2db;
+  border-radius: 8px;
 }
 .overview-bar {
+  grid-column: 1 / -1;
   min-height: 52px;
   display: flex;
   align-items: center;
   gap: clamp(12px, 3vw, 48px);
-  padding: 0 18px;
+  padding: 0 20px;
   box-sizing: border-box;
 }
 .overview-item {
@@ -658,7 +669,7 @@ function refreshData() {
   height: 16px;
   flex: 0 0 4px;
   border-radius: 2px;
-  background: #3976f6;
+  background: #e87924;
 }
 .overview-icon {
   width: 18px;
@@ -670,32 +681,38 @@ function refreshData() {
   font-size: 12px;
 }
 .version-icon {
-  color: #3976f6;
+  color: #e87924;
 }
 .running-icon {
   color: #17a978;
 }
 .instance-icon {
-  color: #8956d6;
+  color: #a85e31;
 }
 .refresh-button {
   margin-left: auto;
-  color: #3976f6;
-  background: #edf3ff;
-  border-color: #edf3ff;
+  color: #c96820;
+  background: #fff1e5;
+  border-color: #fff1e5;
 }
 .refresh-symbol {
   margin-right: 6px;
   font-size: 16px;
 }
 .filter-panel {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: start;
   display: flex;
   flex-direction: column;
-  margin-top: 8px;
-  padding: 18px;
+  gap: 8px;
+  min-height: 100%;
+  padding: 18px 14px;
   box-sizing: border-box;
 }
 .filter-panel.is-collapsed {
+  grid-column: 1;
+  min-height: 0;
   padding-top: 12px;
   padding-bottom: 12px;
 }
@@ -706,61 +723,96 @@ function refreshData() {
 }
 .filter-row {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px 26px;
-  min-height: 34px;
-  padding-right: 110px;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px 0 4px;
+  border-top: 1px solid #f0ebe6;
 }
 .filter-label {
-  width: 30px;
-  flex: 0 0 30px;
-  color: #536176;
+  color: #7d766f;
+  font-size: 12px;
+  font-weight: 600;
 }
 .filter-chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 30px;
-  padding: 0 10px;
-  border-radius: 3px;
-  color: #3976f6;
-  background: #eaf0ff;
+  gap: 9px;
+  min-height: 32px;
+  width: 90%;
+  padding: 0 9px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: #5b5752;
+  background: transparent;
   cursor: pointer;
   user-select: none;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+.filter-chip:hover {
+  background: #faf7f4;
+}
+.filter-chip:has(input:checked) {
+  border-color: #f4dfcc;
+  color: #a95517;
+  background: #fff6ee;
 }
 .filter-chip input {
-  width: 13px;
-  height: 13px;
+  position: relative;
+  display: grid;
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
   margin: 0;
-  accent-color: #3976f6;
+  appearance: none;
+  border: 1.5px solid #c9c1b8;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  place-items: center;
+}
+.filter-chip input:checked {
+  border-color: #d96b1e;
+  background: #e87924;
+}
+.filter-chip input:checked::after {
+  width: 7px;
+  height: 4px;
+  border-bottom: 1.5px solid #fff;
+  border-left: 1.5px solid #fff;
+  content: "";
+  transform: rotate(-45deg) translateY(-1px);
+}
+.filter-chip input:focus-visible {
+  outline: 3px solid rgba(232, 121, 36, 0.22);
+  outline-offset: 2px;
 }
 .instance-filter-row {
-  margin-top: 20px;
+  margin-top: 4px;
 }
 .time-filter-row {
-  margin-top: 18px;
+  margin-top: 4px;
 }
 .range-select {
-  width: 268px;
-  height: 30px;
+  width: 100%;
+  height: 36px;
   padding: 0 10px;
   border: 1px solid #d8dee8;
   border-radius: 3px;
   color: #46556b;
   background: #fff;
-  outline-color: #3976f6;
+  outline-color: #e87924;
 }
 .collapse-button {
-  align-self: flex-end;
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 30px;
-  margin: -8px 0 0;
+  margin: 0 0 4px;
   border: 0;
   padding: 0 2px;
-  color: #3976f6;
+  color: #c96820;
   background: transparent;
   cursor: pointer;
 }
@@ -773,38 +825,55 @@ function refreshData() {
   font-size: 15px;
 }
 .filter-panel.is-collapsed .collapse-button {
-  margin: -8px 0;
+  margin: 0;
 }
 .metrics-panel {
-  margin-top: 14px;
-  padding: 26px 18px 18px;
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  padding: 20px;
+}
+.dashboard.filters-collapsed {
+  grid-template-columns: minmax(0, 1fr);
+}
+.dashboard.filters-collapsed .filter-panel {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: start;
+  width: auto;
+  min-height: 0;
+  padding: 10px 14px;
+}
+.dashboard.filters-collapsed .metrics-panel {
+  grid-column: 1;
+  grid-row: 3;
 }
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px 32px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 .metric-card {
   min-width: 0;
-  min-height: 148px;
-  padding: 16px 18px 12px;
+  min-height: 156px;
+  padding: 16px;
   text-align: left;
   color: #344358;
   border: 1px solid transparent;
-  border-radius: 3px;
-  background: linear-gradient(145deg, #e7efff, #fbfcff);
+  border-radius: 7px;
+  background: linear-gradient(145deg, #fff0e2, #fffdfb);
   box-shadow: 0 5px 14px rgba(40, 61, 92, 0.11);
   cursor: pointer;
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
 .metric-card:nth-child(even) {
-  background: linear-gradient(145deg, #def5fb, #fbfdff);
+  background: linear-gradient(145deg, #f7eee5, #fffdfb);
 }
 .metric-card:hover {
   transform: translateY(-1px);
 }
 .metric-card.is-selected {
-  border-color: var(--metric-color, #4e83ff);
+  border-color: var(--metric-color, #e87924);
 }
 .metric-title {
   display: flex;
@@ -945,9 +1014,8 @@ function refreshData() {
   color: #ff6a4d;
 }
 .chart-panel {
-  margin-top: 14px;
+  grid-column: 1 / -1;
   min-height: 330px;
-  border: 1px solid #d9dee6;
 }
 .chart-header {
   height: 54px;
@@ -1115,7 +1183,7 @@ function refreshData() {
 .table-wrap th {
   height: 36px;
   padding: 0 10px;
-  background: #eaf0ff;
+  background: #fff1e5;
   font-weight: 600;
 }
 .table-wrap td {
@@ -1158,14 +1226,21 @@ function refreshData() {
   display: flex;
   gap: 8px;
 }
-.mini-y-label {
-  width: 33px;
+.mini-y-axis {
   display: flex;
+  flex: 0 0 38px;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
+  min-height: 0;
   padding: 0 0 2px;
   box-sizing: border-box;
+}
+.mini-y-label {
+  display: block;
+  max-width: 100%;
+  line-height: 1;
+  white-space: nowrap;
   color: #9aa5b6;
   font-size: 10px;
 }
@@ -1213,13 +1288,17 @@ function refreshData() {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 @media (max-width: 1180px) {
+  .dashboard {
+    grid-template-columns: minmax(190px, 220px) minmax(0, 1fr);
+    padding: 12px;
+  }
   .overview-bar {
     gap: 14px;
     overflow-x: auto;
   }
   .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    gap: 10px;
   }
   .chart-content {
     grid-template-columns: 1fr;
@@ -1237,6 +1316,9 @@ function refreshData() {
 }
 @media (max-width: 640px) {
   .dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     padding: 6px;
   }
   .overview-bar {
@@ -1253,13 +1335,20 @@ function refreshData() {
     padding: 16px 12px;
   }
   .filter-row {
-    gap: 8px;
-    padding-right: 0;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .filter-label {
+    flex: 0 0 100%;
+  }
+  .filter-chip {
+    width: auto;
   }
   .collapse-button {
-    position: static;
-    display: block;
-    margin: 0 0 12px auto;
+    align-self: flex-end;
+    margin: 0 0 8px;
   }
   .instance-filter-row,
   .time-filter-row {
