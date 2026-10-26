@@ -1,54 +1,60 @@
 <template>
-  <template v-if="route.name === 'login'">
-    <router-view />
-  </template>
-  <template v-else>
-    <div style="width: 100%; height: 100%">
-      <header class="st-header">
-        <div class="header-l">
-          <div class="logo">
-            <span class="system-title">流媒体转发终端</span>
-          </div>
-        </div>
-        <el-popover trigger="hover" popper-class=" popover_acc" width="200px">
-          <div class="acc">
-            <div class="user">
-              <!-- <Avatar :size="30" /> -->
-              <rh-avatar :size="30" />
-              <span>{{ userInfo.userName }}</span>
-            </div>
-          </div>
-          <footer>
-            <el-button type="info" plain class="logout" @click="logout"> 退出登录 </el-button>
-          </footer>
-          <template #reference>
-            <div class="header-r">
-              <rh-avatar :size="20" /><span class="user-name">{{
-                userInfo.userName ? userInfo.userName : "未登录"
-              }}</span>
-            </div>
-          </template>
-        </el-popover>
-      </header>
-      <div class="wrap">
-        <div class="main-sidebar">
-          <el-menu class="main-menus" :router="true" :default-active="route.meta.path || route.path">
-            <el-menu-item :index="item.path" v-for="(item, index) in menuList" :key="index">
-              <i :class="['iconfont', 'icon-' + item.icon]"></i>
-              <span class="m-title">{{ item.title }}</span>
-            </el-menu-item>
-          </el-menu>
-        </div>
-        <div class="no-menu-container">
-          <router-view />
+  <router-view v-if="route.name === 'login'" />
+  <div v-else class="application-shell">
+    <aside class="main-sidebar">
+      <div class="brand">
+        <div class="brand-mark">VF</div>
+        <div class="brand-copy">
+          <span class="brand-kicker">STREAMING MEDIA</span>
+          <strong>视频流媒体<br />数据转发终端</strong>
         </div>
       </div>
-    </div>
-  </template>
+      <div class="nav-caption">工作空间</div>
+      <el-menu class="main-menus" :router="true" :default-active="route.meta.path || route.path">
+        <el-menu-item :index="item.path" v-for="item in menuList" :key="item.ID">
+          <i :class="['iconfont', 'icon-' + item.icon]"></i>
+          <span class="m-title">{{ item.title }}</span>
+          <span v-if="route.path === item.path" class="active-marker"></span>
+        </el-menu-item>
+      </el-menu>
+      <div class="sidebar-foot"><span class="status-dot"></span>转发服务控制台</div>
+    </aside>
+    <section class="workspace">
+      <header class="st-header">
+        <div class="page-heading">
+          <span class="page-eyebrow">CONTROL CENTER</span>
+          <strong>{{ currentPageTitle }}</strong>
+        </div>
+        <div class="header-tools">
+          <span class="system-status"><i></i>系统运行中</span>
+          <span class="header-divider"></span>
+          <el-popover trigger="hover" popper-class="popover_acc" width="200px">
+            <div class="acc">
+              <div class="user">
+                <rh-avatar :size="30" />
+                <span>{{ userInfo.userName }}</span>
+              </div>
+            </div>
+            <footer>
+              <el-button type="info" plain class="logout" @click="logout">退出登录</el-button>
+            </footer>
+            <template #reference>
+              <div class="header-r">
+                <rh-avatar :size="30" />
+                <span class="user-name">{{ userInfo.userName || "未登录" }}</span>
+                <el-icon><ArrowDown /></el-icon>
+              </div>
+            </template>
+          </el-popover>
+        </div>
+      </header>
+      <main class="no-menu-container"><router-view /></main>
+    </section>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { watch, ref, reactive, onMounted, onBeforeUnmount } from "vue";
+import { watch, ref, reactive, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { localStg } from "@/scripts/store";
 import { ElMessage } from "element-plus";
@@ -56,39 +62,19 @@ import { ElMessage } from "element-plus";
 const route = useRoute();
 const router = useRouter();
 const userInfo = ref<any>({});
+const menuList = reactive([
+  { ID: "dashboard", title: "仪表盘", path: "/dashboard", icon: "usermanage" },
+  { ID: "instances", title: "实例管理", path: "/instances", icon: "sys" },
+  { ID: "streams", title: "流列表", path: "/streams", icon: "usermanage" },
+  { ID: "time-config", title: "时间配置", path: "/time-config", icon: "usermanage" }
+]);
+const currentPageTitle = computed(() => menuList.find((item) => item.path === route.path)?.title ?? "控制台");
 
 onMounted(() => {
   const storedUserInfo = localStg.get("userInfo");
-  console.log("Stored userInfo:", storedUserInfo);
   userInfo.value = storedUserInfo ? JSON.parse(storedUserInfo) : {};
 });
 
-const menuList = reactive([
-  {
-    ID: "dashboard",
-    title: "仪表盘",
-    path: "/dashboard",
-    icon: "usermanage"
-  },
-  {
-    ID: "instances",
-    title: "实例管理",
-    path: "/instances",
-    icon: "sys"
-  },
-  {
-    ID: "streams",
-    title: "流列表",
-    path: "/streams",
-    icon: "usermanage"
-  },
-  {
-    ID: "time-config",
-    title: "时间配置",
-    path: "/time-config",
-    icon: "usermanage"
-  }
-]);
 watch(
   () => localStg.get("userInfo"),
   (newValue) => {
@@ -96,7 +82,7 @@ watch(
   },
   { immediate: true }
 );
-// 退出登录
+
 const logout = () => {
   localStg.remove("userInfo");
   router.push("/login");
@@ -111,13 +97,235 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
+.application-shell {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f5f3f0;
+}
+
+.main-sidebar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 0 0 212px;
+  flex-direction: column;
+  width: 212px;
+  height: 100%;
+  padding: 30px 18px 20px;
+  color: #f8f4ee;
+  background: #252724;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 2px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.brand-mark {
+  display: grid;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 12px 12px 12px 4px;
+  color: #fff;
+  background: #e87924;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+
+  strong {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+.brand-kicker,
+.page-eyebrow {
+  color: #e8a16c;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.nav-caption {
+  padding: 28px 12px 10px;
+  color: #90918d;
+  font-size: 11px;
+}
+
+.el-menu.main-menus {
+  width: 100%;
+  border: 0;
+  background: transparent;
+
+  .el-menu-item {
+    position: relative;
+    height: 46px;
+    margin: 4px 0;
+    padding: 0 12px !important;
+    border-radius: 6px;
+    color: #c3c4bf;
+    font-size: 13px;
+    gap: 12px;
+
+    i.iconfont {
+      width: 18px;
+      color: #a5a59f;
+      font-size: 17px;
+      text-align: center;
+    }
+
+    &:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    &.is-active {
+      color: #fff;
+      background: rgba(232, 121, 36, 0.2);
+
+      i.iconfont {
+        color: #f49a54;
+      }
+    }
+  }
+
+  .m-title {
+    flex: 1;
+  }
+
+  .active-marker {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #f49a54;
+  }
+}
+
+.sidebar-foot {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: auto;
+  padding: 15px 10px 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.11);
+  color: #a9aaa5;
+  font-size: 11px;
+}
+
+.status-dot,
+.system-status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #66bd7a;
+  box-shadow: 0 0 0 3px rgba(102, 189, 122, 0.13);
+}
+
+.workspace {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: calc(100% - 252px);
+  min-width: 0;
+  min-height: 0;
+}
+
+.st-header {
+  display: flex;
+  flex: 0 0 78px;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 0 32px;
+  border-bottom: 1px solid #e9e5e0;
+  background: #fff;
+}
+
+.page-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  .page-eyebrow {
+    color: #aa9e92;
+    font-size: 9px;
+  }
+
+  strong {
+    color: #282925;
+    font-size: 18px;
+  }
+}
+
+.header-tools,
+.header-r,
+.system-status {
+  display: flex;
+  align-items: center;
+}
+
+.header-tools {
+  gap: 20px;
+}
+
+.system-status {
+  gap: 9px;
+  color: #686b64;
+  font-size: 12px;
+}
+
+.header-divider {
+  width: 1px;
+  height: 28px;
+  background: #e9e5e0;
+}
+
+.header-r {
+  gap: 10px;
+  cursor: pointer;
+
+  .user-name {
+    color: #494a45;
+    font-size: 13px;
+  }
+
+  .el-icon {
+    color: #92928c;
+  }
+}
+
+.no-menu-container {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: calc(100% - 78px);
+  overflow: hidden;
+
+  > :deep(*) {
+    height: 100%;
+    min-height: 0;
+  }
+}
+
 .popover_acc {
   .acc {
     padding-bottom: 12px;
 
     .user {
       display: flex;
-      -webkit-box-align: center;
       align-items: center;
 
       > span:last-child {
@@ -130,174 +338,61 @@ onBeforeUnmount(() => {
     display: flex;
 
     .logout {
-      margin-left: 10px;
-    }
-
-    .el-button--info {
-      background-color: #f2f2f2;
-      padding: 10px 18px;
-      color: $text-color;
-      border: 1px solid $border-color;
       margin-left: 5px;
+      border: 1px solid $border-color;
+      background-color: #f2f2f2;
+      color: $text-color;
     }
   }
 }
 
-.st-header {
-  width: 100%;
-  height: 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: $topbar-bg;
-
-  .header-l {
-    display: flex;
-    align-items: center;
-    padding-left: 14px;
-
-    .logo {
-      // width: 177px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-
-      .img-logo {
-        width: 24px;
-        height: 24px;
-        margin-right: 10px;
-      }
-
-      .img {
-        width: 125px;
-        height: 17px;
-      }
-    }
-
-    .icon-collapse {
-      font-size: 16px;
-      color: #fff;
-      cursor: pointer;
-    }
-
-    .open {
-      transform: rotate(0);
-    }
-
-    .close {
-      transform: rotate(180deg);
-    }
-  }
-
-  .header-r {
-    display: flex;
-    align-items: center;
-    padding-right: 40px;
-
-    .user-name {
-      color: #fff;
-      margin-left: 10px;
-    }
-  }
-}
-
-.wrap {
-  display: flex;
-  height: calc(100% - 48px);
-  width: 100%;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.main-sidebar {
-  width: 100px;
-  min-width: 100px;
-  height: 100%;
-  max-height: 100%;
-
-  padding: 40px 0;
-  box-sizing: border-box;
-  background: $level1-bg;
-  display: flex;
-  justify-content: center;
-  z-index: 2;
-}
-
-.no-menu-container {
-  width: calc(100% - 100px);
-  min-width: 0;
-  min-height: 0;
-  height: 100%;
-  overflow: hidden;
-
-  > :deep(*) {
-    height: 100%;
-    min-height: 0;
-  }
-}
-
-.el-menu.main-menus {
-  background: $level1-bg;
-  border: none;
-
-  .el-menu-item,
-  .el-menu-item > span {
-    cursor: pointer;
-  }
-
-  .el-menu-item {
-    width: 60px;
-    height: 60px;
-    margin-bottom: $normal-size;
-    font-size: $normal-size;
-    padding: 0 !important;
-    display: flex;
-    line-height: 1;
-    justify-content: center;
-    flex-direction: column;
-    color: $sub-text-color;
-    border-radius: 2px;
-
-    &.is-active {
-      color: #fff;
-      background: $primary-color;
-    }
-
-    i.iconfont {
-      font-size: 18px;
-    }
-
-    .m-title {
-      margin-top: 8px;
-    }
-  }
-
-  .el-menu-item:not(.is-active):hover {
-    color: #fff;
-    // background: #629af5;
-    background: rgba($color: $primary-color, $alpha: 0.5);
-  }
-}
-
-@media (min-width: 1366px) and (max-width: 1600px) {
+@media (max-width: 760px) {
   .main-sidebar {
-    width: 80px;
-    min-width: 80px;
+    flex-basis: 68px;
+    width: 68px;
+    align-items: center;
+    padding: 18px 6px;
+  }
+
+  .brand {
+    padding: 0 0 20px;
+    border: 0;
+  }
+
+  .brand-copy,
+  .nav-caption,
+  .m-title,
+  .active-marker,
+  .sidebar-foot {
+    display: none;
+  }
+
+  .el-menu.main-menus .el-menu-item {
+    justify-content: center;
+    padding: 0 !important;
+  }
+
+  .workspace {
+    width: calc(100% - 68px);
+  }
+
+  .st-header {
+    flex-basis: 68px;
+    padding: 0 14px;
+  }
+
+  .header-tools {
+    gap: 10px;
+  }
+
+  .system-status,
+  .header-divider,
+  .header-r .user-name {
+    display: none;
   }
 
   .no-menu-container {
-    width: calc(100% - 80px);
+    height: calc(100% - 68px);
   }
-}
-
-.system-title {
-  font-family: "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 1px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: relative;
-  padding-left: 12px;
 }
 </style>

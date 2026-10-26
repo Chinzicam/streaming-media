@@ -4,6 +4,20 @@ const Components = require("unplugin-vue-components/webpack").default;
 const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
 // const path = require("path");
 module.exports = defineConfig({
+  chainWebpack: (config) => {
+    config.plugin("html").tap((options) => {
+      options[0].title = "视频流媒体数据转发终端";
+      return options;
+    });
+    config.plugin("define").tap((definitions) => {
+      Object.assign(definitions[0], {
+        __VUE_OPTIONS_API__: "true",
+        __VUE_PROD_DEVTOOLS__: "false",
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false"
+      });
+      return definitions;
+    });
+  },
   publicPath: "/up/",
   productionSourceMap: process.env.NODE_ENV === "production" ? false : true,
   transpileDependencies: true,
@@ -19,17 +33,8 @@ module.exports = defineConfig({
       }
     }
   },
-  chainWebpack: (config) => {
-    config.plugin("define").tap((definitions) => {
-      Object.assign(definitions[0], {
-        __VUE_OPTIONS_API__: "true",
-        __VUE_PROD_DEVTOOLS__: "false",
-        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false"
-      });
-      return definitions;
-    });
-  },
   configureWebpack: {
+    name: "视频流媒体数据转发终端",
     plugins: [
       AutoImport({
         resolvers: [ElementPlusResolver()]
@@ -44,12 +49,11 @@ module.exports = defineConfig({
     //     vue: path.resolve("./node_modules/vue")
     //   }
     // }
-
-    //add by hwt
-    // optimization: {
-    //   minimize: false, // 完全禁用压缩（默认是 true）
-    // },
   },
+  //add by hwt
+  // optimization: {
+  //   minimize: false, // 完全禁用压缩（默认是 true）
+  // },
   devServer: {
     client: {
       overlay: false
