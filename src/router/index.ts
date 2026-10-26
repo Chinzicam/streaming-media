@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import { localStg } from "@/scripts/store";
 
 const routes: Array<RouteRecordRaw> = [
@@ -38,8 +38,10 @@ const routes: Array<RouteRecordRaw> = [
   }
 ];
 
+const isOfflineDemo = process.env.VUE_APP_OFFLINE_DEMO === "true";
+
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: isOfflineDemo ? createWebHashHistory() : createWebHistory(process.env.BASE_URL),
   routes
 });
 

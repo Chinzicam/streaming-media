@@ -4,7 +4,7 @@ const Components = require("unplugin-vue-components/webpack").default;
 const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
 // const path = require("path");
 module.exports = defineConfig({
-  publicPath: "/up/",
+  publicPath: process.env.VUE_APP_OFFLINE_DEMO === "true" ? "./" : "/up/",
   productionSourceMap: process.env.NODE_ENV === "production" ? false : true,
   transpileDependencies: true,
   lintOnSave: false,
