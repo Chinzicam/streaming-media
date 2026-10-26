@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build:demo": "vue-cli-service build --mode demo --dest demo-package",
     "lint": "vue-cli-service lint",
     "protojs": "pbjs -t json-module -w commonjs src/proto/*.proto -o src/proto/proto.js ",
     "protots": "pbjs -t static-module src/proto/*.proto | pbts -o src/proto/proto.d.ts -"

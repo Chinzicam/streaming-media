@@ -18,7 +18,7 @@ module.exports = defineConfig({
       return definitions;
     });
   },
-  publicPath: "/up/",
+  publicPath: process.env.VUE_APP_OFFLINE_DEMO === "true" ? "./" : "/up/",
   productionSourceMap: process.env.NODE_ENV === "production" ? false : true,
   transpileDependencies: true,
   lintOnSave: false,
