@@ -507,8 +507,10 @@ function hoverPercent(chartId: string) {
 
 function pseudoValue(metric: MetricKey, instanceIndex: number, pointIndex: number) {
   const seed = refreshSeed.value * 17 + selectedRange.value;
-  const wave = Math.sin((pointIndex + 1) * 1.37 + instanceIndex * 1.9 + seed * 0.21);
-  const drift = Math.cos((pointIndex + instanceIndex + seed) * 0.73);
+  const metricIndex = metrics.findIndex((item) => item.key === metric);
+  const phase = metricIndex * 0.83;
+  const wave = Math.sin((pointIndex + 1) * (1.13 + metricIndex * 0.09) + instanceIndex * 1.9 + phase + seed * 0.21);
+  const drift = Math.cos((pointIndex + instanceIndex + seed) * (0.61 + metricIndex * 0.035) + phase * 1.7);
   const base =
     metric === "cpu"
       ? 42
@@ -525,7 +527,7 @@ function pseudoValue(metric: MetricKey, instanceIndex: number, pointIndex: numbe
       : metric === "diskWrite"
       ? 22
       : 47;
-  const value = base + instanceIndex * 6 + wave * 15 + drift * 8;
+  const value = base + instanceIndex * 6 + wave * (11 + (metricIndex % 3) * 2) + drift * (5 + (metricIndex % 4));
   return metric === "networkSend" || metric === "networkReceive"
     ? Math.max(5, Math.round(value * 3.2))
     : metric === "diskRead" || metric === "diskWrite"

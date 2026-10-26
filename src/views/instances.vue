@@ -317,7 +317,7 @@ function restartInstance(instance: Instance) {
     cancelButtonText: "取消",
     type: "warning"
   })
-    .then(() => ElMessage.success(`${instance.name}已提交重启（模拟）`))
+    .then(() => ElMessage.success(`${instance.name}已提交重启）`))
     .catch(() => undefined);
 }
 function renameInstance(instance: Instance) {
@@ -334,7 +334,7 @@ function confirmRename() {
 }
 function toggleInstance(instance: Instance) {
   instance.online = !instance.online;
-  ElMessage.success(`${instance.name}已${instance.online ? "启用" : "停用"}（模拟）`);
+  ElMessage.success(`${instance.name}已${instance.online ? "启用" : "停用"}`);
 }
 function goToPage() {
   currentPage.value = Math.min(pageCount.value, Math.max(1, Number(pageInput.value) || 1));
