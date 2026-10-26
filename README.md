@@ -15,8 +15,6 @@ pnpm run build:demo
 
 离线演示使用相对资源路径和 hash 路由，适合直接通过 `file:///` 打开；页面跳转和刷新不依赖本地 Node 服务。
 
-演示账号：`admin`  
-演示密码：`FjRh@root!2012`
 
 ## 开发运行
 
