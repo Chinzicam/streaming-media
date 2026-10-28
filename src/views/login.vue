@@ -65,6 +65,7 @@ const Login = (formEl: FormInstance | undefined) => {
       }
 
       localStg.set("userInfo", JSON.stringify({ userName: user.username }));
+      window.dispatchEvent(new Event("user-info-changed"));
       const redirect = route.query.redirect;
       const target = typeof redirect === "string" && redirect.startsWith("/") ? redirect : "/dashboard";
       router.push(target === "/login" ? "/dashboard" : target);
