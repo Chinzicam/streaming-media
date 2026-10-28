@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, ref, reactive, onMounted, onBeforeUnmount } from "vue";
+import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { localStg } from "@/scripts/store";
 import { ElMessage } from "element-plus";
@@ -57,10 +57,18 @@ const route = useRoute();
 const router = useRouter();
 const userInfo = ref<any>({});
 
-onMounted(() => {
+const syncUserInfo = () => {
   const storedUserInfo = localStg.get("userInfo");
-  console.log("Stored userInfo:", storedUserInfo);
-  userInfo.value = storedUserInfo ? JSON.parse(storedUserInfo) : {};
+  try {
+    userInfo.value = storedUserInfo ? JSON.parse(storedUserInfo) : {};
+  } catch {
+    userInfo.value = {};
+  }
+};
+
+onMounted(() => {
+  syncUserInfo();
+  window.addEventListener("user-info-changed", syncUserInfo);
 });
 
 const menuList = reactive([
@@ -89,21 +97,16 @@ const menuList = reactive([
     icon: "usermanage"
   }
 ]);
-watch(
-  () => localStg.get("userInfo"),
-  (newValue) => {
-    userInfo.value = newValue ? JSON.parse(newValue) : {};
-  },
-  { immediate: true }
-);
 // 退出登录
 const logout = () => {
   localStg.remove("userInfo");
+  syncUserInfo();
   router.push("/login");
   ElMessage.success("已退出登录");
 };
 
 onBeforeUnmount(() => {
+  window.removeEventListener("user-info-changed", syncUserInfo);
   delete sessionStorage.joinArr;
   delete sessionStorage.quitArr;
   delete sessionStorage.sendArr;
