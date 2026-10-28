@@ -159,85 +159,7 @@ type Stream = {
 type SortKey = "instance" | "createdAt" | "type";
 const instances = ["实例70-63-100", "实例70-1-70", "实例70-210-53"];
 const nodes = ["实例70-63-100", "实例70-1-70", "实例70-210-53", "实例70-218-43"];
-const streams = ref<Stream[]>([
-  {
-    id: 1,
-    instance: instances[0],
-    node: nodes[0],
-    createdAt: "2026-10-18 09:24:36",
-    type: "pull",
-    url: "rts://192.168.0.37/live/film",
-    alias: "RH210 录播",
-    streamPath: "live/test",
-    enabled: true
-  },
-  {
-    id: 2,
-    instance: instances[0],
-    node: nodes[0],
-    createdAt: "2026-10-12 16:42:08",
-    type: "pull",
-    url: "rts://10.10.10.235/live/teacher_pi_stream",
-    alias: "教师课堂",
-    streamPath: "live/b",
-    enabled: true
-  },
-  {
-    id: 3,
-    instance: instances[0],
-    node: nodes[0],
-    createdAt: "2026-09-28 13:17:52",
-    type: "pull",
-    url: "rts://10.10.10.235/live/2k_stream",
-    alias: "2K-B教室2",
-    streamPath: "1/2",
-    enabled: true
-  },
-  {
-    id: 4,
-    instance: instances[0],
-    node: nodes[0],
-    createdAt: "2026-09-15 10:03:11",
-    type: "push",
-    url: "rtmp://192.168.0.100/m20/teacher_full",
-    alias: "m20老师全景推流",
-    streamPath: "m20/teacher_full",
-    enabled: true
-  },
-  {
-    id: 5,
-    instance: instances[0],
-    node: nodes[0],
-    createdAt: "2026-08-26 17:56:42",
-    type: "push",
-    url: "rtmp://192.168.0.100/m20/film",
-    alias: "m20合流直播测试",
-    streamPath: "m20/film",
-    enabled: true
-  },
-  {
-    id: 6,
-    instance: instances[0],
-    node: nodes[0],
-    createdAt: "2026-08-03 08:40:19",
-    type: "pull",
-    url: "rts://admin:fjrh5168@10.10.10.235/Channels/101",
-    alias: "频道101",
-    streamPath: "1/111111111111111122222222",
-    enabled: true
-  },
-  {
-    id: 7,
-    instance: instances[0],
-    node: nodes[0],
-    createdAt: "2026-07-19 15:28:04",
-    type: "pull",
-    url: "rtmp://192.168.23.1/live/teacher_2k",
-    alias: "4K",
-    streamPath: "live/teacher_full",
-    enabled: true
-  }
-]);
+const streams = ref<Stream[]>([]);
 const keyword = ref("");
 const selectedIds = ref<number[]>([]);
 const currentPage = ref(1);
@@ -252,7 +174,7 @@ const editingId = ref<number | null>(null);
 const previewItem = ref<Stream | null>(null);
 const batchNode = ref(nodes[0]);
 const batchUrls = ref("");
-const nextId = ref(8);
+const nextId = ref(1);
 const form = reactive({
   instance: instances[0],
   node: nodes[0],

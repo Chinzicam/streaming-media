@@ -5,9 +5,9 @@
       <div class="overview-item">
         <span class="overview-icon version-icon">◆</span><span>版本号：1.2.3.20260916</span>
       </div>
-      <div class="overview-item">
-        <span class="overview-icon running-icon">▶</span><span>启动时间：28天53分钟前</span>
-      </div>
+      <!-- <div class="overview-item">
+         <span class="overview-icon running-icon">▶</span><span>启动时间：{{ uptimeLabel }}</span>
+      </div> -->
       <div class="overview-item">
         <span class="overview-icon instance-icon">▣</span
         ><span>实例在线/总数：{{ selectedInstances.length }}/{{ instances.length }}</span>
@@ -426,14 +426,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 
 const metrics = [
   { key: "cpu", label: "CPU使用率", icon: "◉", color: "#ff8b43", unit: "%" },
   { key: "memory", label: "内存使用率", icon: "▥", color: "#4e8cff", unit: "%" },
   { key: "disk", label: "硬盘使用率", icon: "▰", color: "#5789ff", unit: "%" },
-  { key: "networkSend", label: "网络发送速率", icon: "⇧", color: "#3db8d9", unit: "Mb/s" },
-  { key: "networkReceive", label: "网络接收速率", icon: "⇩", color: "#34a8c8", unit: "Mb/s" },
+  { key: "networkSend", label: "网络发送速率", icon: "⇧", color: "#3db8d9", unit: "Kb/s" },
+  { key: "networkReceive", label: "网络接收速率", icon: "⇩", color: "#34a8c8", unit: "Kb/s" },
   { key: "diskRead", label: "硬盘读取速率", icon: "⇧", color: "#5789ff", unit: "KB/s" },
   { key: "diskWrite", label: "硬盘写入速率", icon: "⇩", color: "#34bca2", unit: "KB/s" },
   { key: "streams", label: "流数量", icon: "▦", color: "#8b69db", unit: " 路" }
@@ -459,9 +459,17 @@ const selectedInstances = ref(instances.map((instance) => instance.id));
 const selectedRange = ref(10);
 const filtersExpanded = ref(true);
 const refreshSeed = ref(0);
+const uptimeSeconds = ref(0);
+let uptimeTimer: ReturnType<typeof setInterval> | undefined;
 const activeMetricKey = ref<MetricKey | null>(null);
 const hoveredPoints = ref<Record<string, number | null>>({});
 const displayedMetricKey = computed<MetricKey>(() => activeMetricKey.value ?? "cpu");
+const uptimeLabel = computed(() => {
+  const days = Math.floor(uptimeSeconds.value / 86400);
+  const hours = Math.floor((uptimeSeconds.value % 86400) / 3600);
+  const minutes = Math.floor((uptimeSeconds.value % 3600) / 60);
+  return `${days}天${hours}小时${minutes}分钟前`;
+});
 const activeMetric = computed(() => metrics.find((metric) => metric.key === displayedMetricKey.value) ?? metrics[0]);
 const selectedInstanceObjects = computed(() =>
   instances.filter((instance) => selectedInstances.value.includes(instance.id))
@@ -482,7 +490,7 @@ const timeLabels = computed(() => {
 const yTicks = [100, 75, 50, 25, 0];
 const chartYTicks = computed(() => {
   if (activeMetric.value.key === "networkSend" || activeMetric.value.key === "networkReceive") {
-    return [240, 180, 120, 60, 0];
+    return [60, 45, 30, 15, 0];
   }
   if (activeMetric.value.key === "diskRead" || activeMetric.value.key === "diskWrite") {
     return [800, 600, 400, 200, 0];
@@ -491,7 +499,7 @@ const chartYTicks = computed(() => {
   return yTicks;
 });
 const chartAxisUnit = computed(() => {
-  if (activeMetric.value.key === "networkSend" || activeMetric.value.key === "networkReceive") return " Mb/s";
+  if (activeMetric.value.key === "networkSend" || activeMetric.value.key === "networkReceive") return " Kb/s";
   if (activeMetric.value.key === "diskRead" || activeMetric.value.key === "diskWrite") return " KB/s";
   return activeMetric.value.unit;
 });
@@ -506,33 +514,36 @@ function hoverPercent(chartId: string) {
 }
 
 function pseudoValue(metric: MetricKey, instanceIndex: number, pointIndex: number) {
-  const seed = refreshSeed.value * 17 + selectedRange.value;
+  const sampleOffsets = [-0.8, -0.3, 0, 0.4, 0.8];
+  const offset = sampleOffsets[refreshSeed.value % sampleOffsets.length];
   const metricIndex = metrics.findIndex((item) => item.key === metric);
   const phase = metricIndex * 0.83;
-  const wave = Math.sin((pointIndex + 1) * (1.13 + metricIndex * 0.09) + instanceIndex * 1.9 + phase + seed * 0.21);
-  const drift = Math.cos((pointIndex + instanceIndex + seed) * (0.61 + metricIndex * 0.035) + phase * 1.7);
+  const wave = Math.sin((pointIndex + 1) * (1.13 + metricIndex * 0.09) + instanceIndex * 1.9 + phase);
+  const drift = Math.cos((pointIndex + instanceIndex) * (0.61 + metricIndex * 0.035) + phase * 1.7);
   const base =
     metric === "cpu"
-      ? 42
+      ? 8
       : metric === "memory"
-      ? 57
+      ? 7
       : metric === "disk"
-      ? 63
+      ? 6
       : metric === "networkSend"
-      ? 52
+      ? 8
       : metric === "networkReceive"
-      ? 38
-      : metric === "diskRead"
       ? 28
+      : metric === "diskRead"
+      ? 0.15
       : metric === "diskWrite"
-      ? 22
-      : 47;
-  const value = base + instanceIndex * 6 + wave * (11 + (metricIndex % 3) * 2) + drift * (5 + (metricIndex % 4));
-  return metric === "networkSend" || metric === "networkReceive"
-    ? Math.max(5, Math.round(value * 3.2))
-    : metric === "diskRead" || metric === "diskWrite"
-    ? Math.max(2, Math.round(value * 7.5))
-    : Math.max(4, Math.min(96, Math.round(value)));
+      ? 0.03
+      : 0;
+  if (metric === "streams" || metric === "memory" || metric === "disk") return base;
+  if (metric === "networkSend" || metric === "networkReceive") {
+    return Number(Math.max(0, base + instanceIndex * 1.2 + wave * base * 0.08 + offset).toFixed(2));
+  }
+  if (metric === "diskRead" || metric === "diskWrite") {
+    return Number(Math.max(0, base + wave * base * 0.2 + offset * base * 0.1).toFixed(3));
+  }
+  return Math.max(0, Math.round(base + instanceIndex * 0.8 + wave + drift * 0.5 + offset));
 }
 function linePoints(instanceIndex: number, metric: MetricKey = displayedMetricKey.value, height = 190) {
   return Array.from({ length: 14 }, (_, index) => {
@@ -543,7 +554,7 @@ function lineY(instanceIndex: number, metric: MetricKey, pointIndex: number, hei
   const value = pseudoValue(metric, instanceIndex, pointIndex);
   const normalizedValue =
     metric === "networkSend" || metric === "networkReceive"
-      ? (value / 240) * 100
+      ? (value / 60) * 100
       : metric === "diskRead" || metric === "diskWrite"
       ? (value / 800) * 100
       : metric === "streams"
@@ -561,35 +572,36 @@ function clearHover(chartId: string) {
   delete hoveredPoints.value[chartId];
 }
 function metricStats(key: MetricKey) {
-  const seed = refreshSeed.value * 7 + selectedRange.value;
+  const sampleOffsets = [0, 0.2, -0.1, 0.1, -0.2];
+  const offset = sampleOffsets[refreshSeed.value % sampleOffsets.length];
   if (key === "cpu")
     return [
-      { label: "最高", value: 14 + (seed % 4) },
-      { label: "最低", value: 3 + (seed % 2) }
+      { label: "最高", value: 8 + Math.round(offset * 5) },
+      { label: "最低", value: 2 + Math.round(offset * 5) }
     ];
   if (key === "memory")
     return [
-      { label: "最高", value: 9 + (seed % 3) },
-      { label: "最低", value: 5 + (seed % 2) }
+      { label: "最高", value: 11 },
+      { label: "最低", value: 3 }
     ];
   if (key === "disk")
     return [
-      { label: "最高", value: 8 + (seed % 3) },
-      { label: "最低", value: seed % 2 }
+      { label: "最高", value: 7 },
+      { label: "最低", value: 0 }
     ];
   if (key === "networkSend" || key === "networkReceive")
     return [
-      { label: "最高", value: ((key === "networkSend" ? 4.2 : 3.4) + (seed % 9) * 0.17).toFixed(2), unit: "Mb/s" },
-      { label: "最低", value: ((key === "networkSend" ? 380 : 290) + (seed % 11) * 13).toFixed(2), unit: "Kb/s" }
+      { label: "最高", value: ((key === "networkSend" ? 8 : 28.51) * (1 + offset / 10)).toFixed(2), unit: "Kb/s" },
+      { label: "最低", value: "0", unit: "Kb/s" }
     ];
   if (key === "diskRead" || key === "diskWrite")
     return [
-      { label: "最高", value: ((key === "diskRead" ? 86 : 64) + (seed % 13) * 8).toFixed(2), unit: "KB/s" },
-      { label: "最低", value: ((seed % 4) * 2).toFixed(2), unit: "KB/s" }
+      { label: "最高", value: (key === "diskRead" ? 0.15 : 0.03).toFixed(2), unit: "KB/s" },
+      { label: "最低", value: "0", unit: "KB/s" }
     ];
   return [
-    { label: "当前拉流", value: 95 + (seed % 5) },
-    { label: "断流", value: seed % 3 }
+    { label: "当前拉流", value: 0 },
+    { label: "断流", value: 0 }
   ];
 }
 function latestValue(instanceIndex: number) {
@@ -597,15 +609,11 @@ function latestValue(instanceIndex: number) {
 }
 function tableValue(metric: MetricKey, instanceId: string) {
   const instanceIndex = instances.findIndex((instance) => instance.id === instanceId);
-  const metricIndex = metrics.findIndex((item) => item.key === metric);
-  const seed = refreshSeed.value * 19 + selectedRange.value * 3 + instanceIndex * 11 + metricIndex * 23;
-  const variation = (Math.sin(seed * 0.37) + 1) / 2;
-  if (metric === "networkSend") return `${(2.8 + variation * 5.6).toFixed(2)} Mb/s`;
-  if (metric === "networkReceive") return `${(1.9 + variation * 4.8).toFixed(2)} Mb/s`;
-  if (metric === "diskRead") return `${(40 + variation * 240).toFixed(1)} KB/s`;
-  if (metric === "diskWrite") return `${(18 + variation * 150).toFixed(1)} KB/s`;
-  if (metric === "streams") return `${Math.round(40 + variation * 80)} 路`;
-  return `${Math.round(12 + variation * 76)}%`;
+  const value = pseudoValue(metric, instanceIndex, 13);
+  if (metric === "networkSend" || metric === "networkReceive") return `${value.toFixed(2)} Kb/s`;
+  if (metric === "diskRead" || metric === "diskWrite") return `${value.toFixed(3)} KB/s`;
+  if (metric === "streams") return "0 路";
+  return `${value}%`;
 }
 function selectMetric(key: MetricKey) {
   activeMetricKey.value = key;
@@ -618,6 +626,9 @@ watch(selectedMetrics, (visibleMetrics) => {
 function refreshData() {
   refreshSeed.value += 1;
 }
+onMounted(() => {
+  uptimeTimer = setInterval(() => (uptimeSeconds.value += 60), 60_000);
+});
 </script>
 
 <style lang="scss" scoped>
